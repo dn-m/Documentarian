@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "SwiftShell",
+        "repositoryURL": "https://github.com/kareman/SwiftShell",
+        "state": {
+          "branch": null,
+          "revision": "02c8ae6a5d829d28aaa9683129fc71f899beca3a",
+          "version": "4.1.1"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
