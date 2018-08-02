@@ -1,3 +1,4 @@
 # Documentarian
 
-A description of this package.
+Command line interface for creating comprehensive documentation for the dn-m project.
+
