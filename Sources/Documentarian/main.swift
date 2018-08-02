@@ -45,15 +45,19 @@ func main() {
     do {
         let package = try decodePackage()
         let arguments = CommandLine.arguments.dropFirst()
+
+        // If no arguments are given, generate documentation for all modules in package
         if arguments.isEmpty {
             try generateDocs(for: package.products, in: package)
         } else {
+            // If any of the names are bad, bail.
             for potentialModuleName in arguments {
                 guard package.products.map({ $0.name }).contains(potentialModuleName) else {
                     print("No such module \(potentialModuleName)")
                     return
                 }
             }
+            // Generate documentation for the modules specified
             try generateDocs(for: arguments.map(Product.init), in: package)
         }
     } catch {
