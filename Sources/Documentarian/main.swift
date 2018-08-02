@@ -27,13 +27,14 @@ func generateDocs(for modules: [Product], in package: Package) throws {
 /// Generates documentation for the given `module` in the given `package`.
 func generateDocs(for module: Product, in package: Package) throws {
     print("generate docs for \(module.name) in \(package.name)")
-    try runAndPrint("jazzy",
-        "--theme", "fullwidth",
+    try runAndPrint(
+        "jazzy",
         "--module", module.name,
-        "--config", "./Sources/\(module.name)/Documentation/.jazzy.yaml",
-        "--output", "./Sources/\(module.name)/Documentation/Output",
-        "--abstract", "./Sources/\(module.name)/Documentation/*",
         "--xcodebuild_arguments", "-scheme,\(package.name)-Package"
+//        "--theme", "fullwidth",
+//        "--config", "./Sources/\(module.name)/Documentation/.jazzy.yaml",
+//        "--output", "./Sources/\(module.name)/Documentation/Output",
+//        "--abstract", "./Sources/\(module.name)/Documentation/*",
     )
 }
 
