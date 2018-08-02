@@ -28,11 +28,12 @@ func generateDocs(for modules: [Product], in package: Package) throws {
 func generateDocs(for module: Product, in package: Package) throws {
     print("generate docs for \(module.name) in \(package.name)")
     try runAndPrint("jazzy",
-        "-x", "-scheme,\(package.name)-Package",
+        "--theme", "fullwidth",
         "--module", module.name,
         "--config", "./Sources/\(module.name)/Documentation/.jazzy.yaml",
         "--output", "./Sources/\(module.name)/Documentation/Output",
-        "--abstract", "./Sources/\(module.name)/Documentation/*"
+        "--abstract", "./Sources/\(module.name)/Documentation/*",
+        "--xcodebuild_arguments", "-scheme,\(package.name)-Package"
     )
 }
 
@@ -40,7 +41,6 @@ func generateDocs(for module: Product, in package: Package) throws {
 /// documentation for a given subset of modules, you can specify them by their name as arguments.
 ///
 /// Otherwise, documentation for all packages will be generated.
-///
 func main() {
     do {
         let package = try decodePackage()
