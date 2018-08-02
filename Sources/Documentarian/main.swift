@@ -28,7 +28,7 @@ func generateDocs(for modules: [Product], in package: Package) throws {
 func generateDocs(for module: Product, in package: Package) throws {
     print("generate docs for \(module.name) in \(package.name)")
     try runAndPrint("jazzy",
-                    "-x", "-scheme,\(package.name)-Package",
+        "-x", "-scheme,\(package.name)-Package",
         "--module", module.name,
         "--config", "./Sources/\(module.name)/Documentation/.jazzy.yaml",
         "--output", "./Sources/\(module.name)/Documentation/Output",
