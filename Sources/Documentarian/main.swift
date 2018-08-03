@@ -54,11 +54,11 @@ func generateSite(for package: Package) throws {
     <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>dn-m</title>
-        <link rel="stylesheet" type="text/css" href="Documentarian/css/jazzy.css">
-        <link rel="stylesheet" type="text/css" href="Documentarian/css/highlight.css">
+        <link rel="stylesheet" type="text/css" href="../Documentarian/css/jazzy.css">
+        <link rel="stylesheet" type="text/css" href="../Documentarian/css/highlight.css">
         <meta charset="utf-8">
-        <script src="Documentarian/js/jquery.min.js" defer></script>
-        <script src="Documentarian/js/jazzy.js" defer></script>
+        <script src="../Documentarian/js/jquery.min.js" defer></script>
+        <script src="../Documentarian/js/jazzy.js" defer></script>
     </head>
     """
 
