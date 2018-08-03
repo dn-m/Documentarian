@@ -49,14 +49,29 @@ func generateSite(for package: Package) throws {
     <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>dn-m</title>
-        <link rel="stylesheet" type="text/css" href="build/css/jazzy.css">
-        <link rel="stylesheet" type="text/css" href="build/css/highlight.css">
+        <link rel="stylesheet" type="text/css" href="Documentarian/css/jazzy.css">
+        <link rel="stylesheet" type="text/css" href="Documentarian/css/highlight.css">
         <meta charset="utf-8">
         <script src="Documentarian/js/jquery.min.js" defer></script>
         <script src="Documentarian/js/jazzy.js" defer></script>
     </head>
     <body>
-    <p>Hello, world!</p>
+    <a title="dn-m"></a>
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="index.html">
+          dn-m Docs
+        </a>
+      </p>
+      <p class="header-col header-col--secondary">
+        <a class="header-link" href="https://github.com/dn-m/">
+          <img class="header-icon" src="build/img/gh.png">
+          View on GitHub
+        </a>
+      </p>
+    </header>
+    <p>dn-m docs!</p>
+    \(package.products.map { "<a href=Packages/\($0.name)>\($0.name)</a>" })
     </body>
     </html>
     """
