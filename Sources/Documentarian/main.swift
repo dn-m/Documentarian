@@ -48,6 +48,23 @@ func fetchAndBuildSourceKitten() {
     run(bash: "cd ..")
 }
 
+enum Error: Swift.Error {
+    case invalidModuleName(String)
+}
+
+func validProducts<C>(from arguments: C, in package: Package) throws -> [Product]
+    where C: Collection, C.Element == String
+{
+    guard !arguments.isEmpty else { return package.products }
+    let actualModuleNames = package.products.map { $0.name }
+    for potentialModuleName in arguments {
+        guard actualModuleNames.contains(potentialModuleName) else {
+            throw Error.invalidModuleName(potentialModuleName)
+        }
+    }
+    return arguments.map(Product.init)
+}
+
 /// Generates documentation for the local Swift Package. If you only want to generate the
 /// documentation for a given subset of modules, you can specify them by their name as arguments.
 ///
@@ -55,24 +72,11 @@ func fetchAndBuildSourceKitten() {
 func main() {
 
     do {
-        fetchAndBuildSourceKitten()
         let package = try decodePackage()
         let arguments = CommandLine.arguments.dropFirst()
-
-        // If no arguments are given, generate documentation for all modules in package
-        if arguments.isEmpty {
-            try generateDocs(for: package.products, in: package)
-        } else {
-            // If any of the names are bad, bail.
-            for potentialModuleName in arguments {
-                guard package.products.map({ $0.name }).contains(potentialModuleName) else {
-                    print("No such module \(potentialModuleName)")
-                    return
-                }
-            }
-            // Generate documentation for the modules specified
-            try generateDocs(for: arguments.map(Product.init), in: package)
-        }
+        let products = try validProducts(from: arguments, in: package)
+        fetchAndBuildSourceKitten()
+        try generateDocs(for: products, in: package)
     } catch {
         print(error)
     }
