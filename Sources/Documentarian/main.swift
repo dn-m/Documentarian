@@ -86,7 +86,6 @@ func generateSite(for package: Package) throws {
     """
 
     let nav = """
-    <div class="content-wrapper>
     <nav class="navigation">
         <ul class="nav-groups">
         <li class="nav-group-name" id="Modules">
@@ -108,14 +107,23 @@ func generateSite(for package: Package) throws {
     </article>
     """
 
+    let footer = """
+    <section class="footer">
+        <p>© 2018 <a class="link" href="https://github.com/dn-m" target="_blank" rel="external">dn-m</a>. All rights reserved.</p>
+    </section>
+    """
+
     let index = """
     \(htmlConfig)
     \(head)
     <body>
     <a title="dn-m"></a>
     \(header)
+    <div class="content-wrapper>
     \(nav)
     \(content)
+    </div>
+    \(footer)
     </body>
     </html>
     """
