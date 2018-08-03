@@ -67,13 +67,13 @@ func pullDocSite() throws {
     //try runAndPrint(bash: "git clone https://github.com/dn-m/dn-m.github.io")
 }
 
-func fetchAndBuildSourceKitten() {
+func fetchAndBuildSourceKitten() throws {
     print("Fetching SourceKitten...")
-    run(bash: "rm -f .swift-version")
-    run(bash: "if [ ! -d SourceKitten ]; then git clone https://github.com/jpsim/SourceKitten fi")
+    try runAndPrint(bash: "rm -f .swift-version")
+    try runAndPrint(bash: "if [ ! -d SourceKitten ]; then git clone https://github.com/jpsim/SourceKitten fi")
     run(bash: "cd SourceKitten")
     print("Building SourceKitten...")
-    run(bash: "swift build --package-path SourceKitten")
+    try runAndPrint(bash: "swift build --package-path SourceKitten")
     run(bash: "cd ..")
 }
 
@@ -104,7 +104,7 @@ func main() {
         let package = try decodePackage()
         let arguments = CommandLine.arguments.dropFirst()
         let products = try validProducts(from: arguments, in: package)
-        fetchAndBuildSourceKitten()
+        try fetchAndBuildSourceKitten()
         try generateDocs(for: products, in: package)
         try generateSite(for: package)
         try pullDocSite()
