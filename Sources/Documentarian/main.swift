@@ -49,8 +49,9 @@ func pullDocSite() throws {
 
 func fetchAndBuildSourceKitten() {
     print("Fetching SourceKitten...")
-    run(bash: "git clone https://github.com/jpsim/SourceKitten && cd SourceKitten")
+    run(bash: "rm -rf SourceKitten")
     run(bash: "rm -f .swift-version")
+    run(bash: "git clone https://github.com/jpsim/SourceKitten && cd SourceKitten")
     print("Building SourceKitten...")
     run(bash: "swift build --package-path SourceKitten")
     run(bash: "cd ..")
