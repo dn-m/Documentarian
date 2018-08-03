@@ -115,7 +115,7 @@ func generateSite(for package: Package) throws {
         <body>
         <a title="dn-m"></a>
         \(header)
-            <div class="content-wrapper>
+            <div class="content-wrapper">
                 \(nav)
                 \(content)
             </div>
