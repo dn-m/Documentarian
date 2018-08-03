@@ -59,7 +59,7 @@ func generateSite(for package: Package) throws {
     </body>
     </html>
     """
-    run(bash: "\(fakeSite) > Documentation/index.html")
+    try runAndPrint(bash: "\(fakeSite) > Documentation/index.html")
 }
 
 func pullDocSite() throws {
