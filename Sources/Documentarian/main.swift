@@ -42,7 +42,8 @@ func generateDocs(for module: Product, in package: Package) throws {
 
 func generateSite(for package: Package) throws {
     print("Generating site for \(package.name)")
-    let file = try open(forWriting: "Documentation/index.html")
+
+
 
     let htmlConfig = """
     <!DOCTYPE html>
@@ -89,6 +90,8 @@ func generateSite(for package: Package) throws {
     </html>
     """
 
+    try runAndPrint(bash: "rm -f Documentation/index.html")
+    let file = try open(forWriting: "Documentation/index.html")
     file.write(index)
     file.close()
 }
