@@ -39,6 +39,10 @@ func generateDocs(for module: Product, in package: Package) throws {
     )
 }
 
+func pullDocSite() throws {
+    try runAndPrint(bash: "git clone https://github.com/dn-m/dn-m.github.io")
+}
+
 func fetchAndBuildSourceKitten() {
     print("Fetching SourceKitten...")
     run(bash: "git clone https://github.com/jpsim/SourceKitten && cd SourceKitten")
@@ -52,7 +56,7 @@ enum Error: Swift.Error {
     case invalidModuleName(String)
 }
 
-func validProducts<C>(from arguments: C, in package: Package) throws -> [Product]
+func validProducts <C> (from arguments: C, in package: Package) throws -> [Product]
     where C: Collection, C.Element == String
 {
     guard !arguments.isEmpty else { return package.products }
@@ -77,6 +81,7 @@ func main() {
         let products = try validProducts(from: arguments, in: package)
         fetchAndBuildSourceKitten()
         try generateDocs(for: products, in: package)
+        try pullDocSite()
     } catch {
         print(error)
     }
