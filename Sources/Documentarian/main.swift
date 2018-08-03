@@ -32,26 +32,44 @@ func generateDocs(for module: Product, in package: Package) throws {
         jazzy \\
         -s \(module.name).json \\
         --config ./Sources/\(module.name)/Documentation/.jazzy.yaml \\
-        --output Documentation/\(module.name) \\
+        --output Documentation/Packages/\(module.name) \\
         --theme fullwidth \\
         --abstract ./Sources/\(module.name)/Documentation/*
         """
     )
+    run(bash: "rm \(module.name).json")
 }
 
 func generateSite(for package: Package) throws {
     print("Generating site for \(package.name)")
+    let fakeSite = """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>dn-m</title>
+        <link rel="stylesheet" type="text/css" href="build/css/jazzy.css">
+        <link rel="stylesheet" type="text/css" href="build/css/highlight.css">
+        <meta charset="utf-8">
+        <script src="build/js/jquery.min.js" defer></script>
+        <script src="build/js/jazzy.js" defer></script>
+
+    </head>
+    """
+    // create index.html in Documentation
+    run(bash: "touch Documentation/index.html")
 }
 
 func pullDocSite() throws {
-    try runAndPrint(bash: "git clone https://github.com/dn-m/dn-m.github.io")
+    #warning("Reintroduce pulling doc site when deployed")
+    //try runAndPrint(bash: "git clone https://github.com/dn-m/dn-m.github.io")
 }
 
 func fetchAndBuildSourceKitten() {
     print("Fetching SourceKitten...")
-    run(bash: "rm -rf SourceKitten")
     run(bash: "rm -f .swift-version")
-    run(bash: "git clone https://github.com/jpsim/SourceKitten && cd SourceKitten")
+    run(bash: "if [ ! -d SourceKitten ]; then git clone https://github.com/jpsim/SourceKitten fi")
+    run(bash: "cd SourceKitten")
     print("Building SourceKitten...")
     run(bash: "swift build --package-path SourceKitten")
     run(bash: "cd ..")
