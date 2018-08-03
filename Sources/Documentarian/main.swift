@@ -51,13 +51,15 @@ func generateSite(for package: Package) throws {
         <link rel="stylesheet" type="text/css" href="build/css/jazzy.css">
         <link rel="stylesheet" type="text/css" href="build/css/highlight.css">
         <meta charset="utf-8">
-        <script src="build/js/jquery.min.js" defer></script>
-        <script src="build/js/jazzy.js" defer></script>
-
+        <script src="Documentarian/js/jquery.min.js" defer></script>
+        <script src="Documentarian/js/jazzy.js" defer></script>
     </head>
+    <body>
+    <p>Hello, world!</p>
+    </body>
+    </html>
     """
-    // create index.html in Documentation
-    run(bash: "touch Documentation/index.html")
+    run(bash: "\(fakeSite) > Documentation/index.html")
 }
 
 func pullDocSite() throws {
