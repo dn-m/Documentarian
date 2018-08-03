@@ -40,10 +40,17 @@ func generateDocs(for module: Product, in package: Package) throws {
     run(bash: "rm \(module.name).json")
 }
 
+func groupTask(for module: Product) -> String {
+    return """
+    <li class="nav-group-task">
+    <a class="nav-group-task-link" href="Packages/\(module.name)/index.html">\(module.name)</a>
+    </li>
+    """
+
+}
+
 func generateSite(for package: Package) throws {
     print("Generating site for \(package.name)")
-
-
 
     let htmlConfig = """
     <!DOCTYPE html>
@@ -78,14 +85,34 @@ func generateSite(for package: Package) throws {
     </header>
     """
 
+    let content = """
+    <div class="content-wrapper>
+    <nav class="navigation">
+        <ul class="nav-groups">
+            <li class="nav-group-name" id="Modules">
+            <span class="nav-group-name-link">Modules</span>
+            <ul class="nav-group-tasks">
+            <li class="nav-group-task">
+            <a class="nav-group-task-link" href="https://dn-m.github.io/dn-m">dn-m</a>
+            </li>
+        </ul>
+
+        <li class="nav-group-name" id="Interaction - Graphics">
+        <span class="nav-group-name-link">Interaction - Graphics</span>
+        <ul class="nav-group-tasks">
+        \(package.products.map(groupTask).joined(separator: "\n"))
+        </ul>
+    </nav>
+    </div>
+    """
+
     let index = """
     \(htmlConfig)
     \(head)
     <body>
     <a title="dn-m"></a>
     \(header)
-    <p>dn-m docs!</p>
-    \(package.products.map { module in "<a href=Packages/\(module.name)/index.html>\(module.name)</a>" }.joined())
+    \(content)
     </body>
     </html>
     """
