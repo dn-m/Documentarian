@@ -85,7 +85,7 @@ func generateSite(for package: Package) throws {
     </header>
     """
 
-    let content = """
+    let nav = """
     <div class="content-wrapper>
     <nav class="navigation">
         <ul class="nav-groups">
@@ -98,12 +98,23 @@ func generateSite(for package: Package) throws {
     </div>
     """
 
+    let content = """
+    <article class="main-content">
+        <section class="section">
+        <div class="section-content">
+            \(run("redcarpet", "README.md").stdout)
+        </div>
+        </section>
+    </article>
+    """
+
     let index = """
     \(htmlConfig)
     \(head)
     <body>
     <a title="dn-m"></a>
     \(header)
+    \(nav)
     \(content)
     </body>
     </html>
