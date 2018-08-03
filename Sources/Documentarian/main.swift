@@ -42,7 +42,8 @@ func generateDocs(for module: Product, in package: Package) throws {
 
 func generateSite(for package: Package) throws {
     print("Generating site for \(package.name)")
-    let fakeSite = """
+    let file = try open(forWriting: "Documentation/index.html")
+    let index = """
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -59,7 +60,8 @@ func generateSite(for package: Package) throws {
     </body>
     </html>
     """
-    try runAndPrint(bash: "\(fakeSite) > Documentation/index.html")
+    file.write(index)
+    file.close()
 }
 
 func pullDocSite() throws {
