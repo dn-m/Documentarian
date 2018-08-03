@@ -26,7 +26,7 @@ func generateDocs(for modules: [Product], in package: Package) throws {
 
 /// Generates documentation for the given `module` in the given `package`.
 func generateDocs(for module: Product, in package: Package) throws {
-    print("generate docs for \(module.name) in \(package.name)")
+    print("Generating documentation for the \(module.name) module")
     run(bash: "SourceKitten/.build/debug/sourcekitten doc --spm-module \(module.name) > \(module.name).json")
     run(bash: """
         jazzy \\
@@ -39,6 +39,15 @@ func generateDocs(for module: Product, in package: Package) throws {
     )
 }
 
+func fetchAndBuildSourceKitten() {
+    print("Fetching SourceKitten...")
+    run(bash: "git clone https://github.com/jpsim/SourceKitten && cd SourceKitten")
+    run(bash: "rm -f .swift-version")
+    print("Building SourceKitten...")
+    run(bash: "swift build --package-path SourceKitten")
+    run(bash: "cd ..")
+}
+
 /// Generates documentation for the local Swift Package. If you only want to generate the
 /// documentation for a given subset of modules, you can specify them by their name as arguments.
 ///
@@ -46,14 +55,7 @@ func generateDocs(for module: Product, in package: Package) throws {
 func main() {
 
     do {
-
-        // Clone and build SourceKittn
-        // TODO: Move out into function, only perform if names are valid (see below)
-        run(bash: "git clone https://github.com/jpsim/SourceKitten && cd SourceKitten")
-        run(bash: "rm -f .swift-version")
-        run(bash: "swift build --package-path SourceKitten")
-        run(bash: "cd ..")
-
+        fetchAndBuildSourceKitten()
         let package = try decodePackage()
         let arguments = CommandLine.arguments.dropFirst()
 
