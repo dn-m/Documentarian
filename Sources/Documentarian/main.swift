@@ -32,11 +32,15 @@ func generateDocs(for module: Product, in package: Package) throws {
         jazzy \\
         -s \(module.name).json \\
         --config ./Sources/\(module.name)/Documentation/.jazzy.yaml \\
-        --output Sources/\(module.name)/Documentation/\(module.name) \\
+        --output Documentation/\(module.name) \\
         --theme fullwidth \\
         --abstract ./Sources/\(module.name)/Documentation/*
         """
     )
+}
+
+func generateSite(for package: Package) throws {
+    print("Generating site for \(package.name)")
 }
 
 func pullDocSite() throws {
@@ -81,7 +85,7 @@ func main() {
         let products = try validProducts(from: arguments, in: package)
         fetchAndBuildSourceKitten()
         try generateDocs(for: products, in: package)
-        // TODO: Create Package-level site linking to the individual ones.
+        try generateSite(for: package)
         try pullDocSite()
     } catch {
         print(error)
