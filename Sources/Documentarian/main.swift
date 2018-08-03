@@ -32,9 +32,9 @@ func generateDocs(for module: Product, in package: Package) throws {
         jazzy \\
         -s \(module.name).json \\
         --config ./Sources/\(module.name)/Documentation/.jazzy.yaml \\
-        --output Sources/\(module.name)/Documentation/Output \\
+        --output Sources/\(module.name)/Documentation/\(module.name) \\
         --theme fullwidth \\
-        --abstract ./Sources/\(module.name)/Documentation
+        --abstract ./Sources/\(module.name)/Documentation/*
         """
     )
 }
@@ -81,6 +81,7 @@ func main() {
         let products = try validProducts(from: arguments, in: package)
         fetchAndBuildSourceKitten()
         try generateDocs(for: products, in: package)
+        // TODO: Create Package-level site linking to the individual ones.
         try pullDocSite()
     } catch {
         print(error)
