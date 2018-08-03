@@ -27,14 +27,16 @@ func generateDocs(for modules: [Product], in package: Package) throws {
 /// Generates documentation for the given `module` in the given `package`.
 func generateDocs(for module: Product, in package: Package) throws {
     print("generate docs for \(module.name) in \(package.name)")
-
-    // Assumes SourceKitten has been installed
-
-//    let json = run("SourceKitten/.build/debug/sourcekitten", "doc", "--spm-module", module.name)
-//    print("JSON:")
-//    print(json.stdout)
-    try runAndPrint(bash: "SourceKitten/.build/debug/sourcekitten doc --spm-module \(module.name) > \(module.name).json")
-    try runAndPrint(bash: "jazzy -s \(module.name).json --config ./Sources/\(module.name)/Documentation/.jazzy.yaml --output Sources/\(module.name)/Documentation/Output --theme fullwidth --abstract ./Sources/\(module.name)/Documentation")
+    run(bash: "SourceKitten/.build/debug/sourcekitten doc --spm-module \(module.name) > \(module.name).json")
+    run(bash: """
+        jazzy \\
+        -s \(module.name).json \\
+        --config ./Sources/\(module.name)/Documentation/.jazzy.yaml \\
+        --output Sources/\(module.name)/Documentation/Output \\
+        --theme fullwidth \\
+        --abstract ./Sources/\(module.name)/Documentation
+        """
+    )
 }
 
 /// Generates documentation for the local Swift Package. If you only want to generate the
