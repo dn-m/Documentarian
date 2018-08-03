@@ -94,7 +94,6 @@ func generateSite(for package: Package) throws {
         \(package.products.map(groupTask).joined(separator: "\n"))
         </ul>
     </nav>
-    </div>
     """
 
     let content = """
