@@ -43,9 +43,13 @@ func generateDocs(for module: Product, in package: Package) throws {
 func generateSite(for package: Package) throws {
     print("Generating site for \(package.name)")
     let file = try open(forWriting: "Documentation/index.html")
-    let index = """
+
+    let htmlConfig = """
     <!DOCTYPE html>
     <html lang="en">
+    """
+
+    let head = """
     <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>dn-m</title>
@@ -55,8 +59,9 @@ func generateSite(for package: Package) throws {
         <script src="Documentarian/js/jquery.min.js" defer></script>
         <script src="Documentarian/js/jazzy.js" defer></script>
     </head>
-    <body>
-    <a title="dn-m"></a>
+    """
+
+    let header = """
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
@@ -70,11 +75,20 @@ func generateSite(for package: Package) throws {
         </a>
       </p>
     </header>
+    """
+
+    let index = """
+    \(htmlConfig)
+    \(head)
+    <body>
+    <a title="dn-m"></a>
+    \(header)
     <p>dn-m docs!</p>
-    \(package.products.map { "<a href=Packages/\($0.name)>\($0.name)</a>" })
+    \(package.products.map { module in "<a href=Packages/\(module.name)>\(module.name)</a>" })
     </body>
     </html>
     """
+
     file.write(index)
     file.close()
 }
