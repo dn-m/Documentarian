@@ -89,16 +89,8 @@ func generateSite(for package: Package) throws {
     <div class="content-wrapper>
     <nav class="navigation">
         <ul class="nav-groups">
-            <li class="nav-group-name" id="Modules">
-            <span class="nav-group-name-link">Modules</span>
-            <ul class="nav-group-tasks">
-            <li class="nav-group-task">
-            <a class="nav-group-task-link" href="https://dn-m.github.io/dn-m">dn-m</a>
-            </li>
-        </ul>
-
-        <li class="nav-group-name" id="Interaction - Graphics">
-        <span class="nav-group-name-link">Interaction - Graphics</span>
+        <li class="nav-group-name" id="Modules">
+        <span class="nav-group-name-link">Modules</span>
         <ul class="nav-group-tasks">
         \(package.products.map(groupTask).joined(separator: "\n"))
         </ul>
