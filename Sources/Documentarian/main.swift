@@ -84,7 +84,7 @@ func generateSite(for package: Package) throws {
     <a title="dn-m"></a>
     \(header)
     <p>dn-m docs!</p>
-    \(package.products.map { module in "<a href=Packages/\(module.name)>\(module.name)</a>" })
+    \(package.products.map { module in "<a href=Packages/\(module.name)>\(module.name)</a>" }.joined())
     </body>
     </html>
     """
