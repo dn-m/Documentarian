@@ -43,10 +43,9 @@ func generateDocs(for module: Product, in package: Package) throws {
 func groupTask(for module: Product) -> String {
     return """
     <li class="nav-group-task">
-    <a class="nav-group-task-link" href="Packages/\(module.name)/index.html">\(module.name)</a>
+        <a class="nav-group-task-link" href="Packages/\(module.name)/index.html">\(module.name)</a>
     </li>
     """
-
 }
 
 func generateSite(for package: Package) throws {
@@ -85,8 +84,9 @@ func generateSite(for package: Package) throws {
         <ul class="nav-groups">
             <li class="nav-group-name" id="Modules">
             <span class="nav-group-name-link">Modules</span>
-            <ul class="nav-group-tasks">
-            \(package.products.map(groupTask).joined(separator: "\n"))
+                <ul class="nav-group-tasks">
+                    \(package.products.map(groupTask).joined(separator: "\n"))
+                </ul>
             </li>
         </ul>
     </nav>
