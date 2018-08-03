@@ -52,11 +52,6 @@ func groupTask(for module: Product) -> String {
 func generateSite(for package: Package) throws {
     print("Generating site for \(package.name)")
 
-    let htmlConfig = """
-    <!DOCTYPE html>
-    <html lang="en">
-    """
-
     let head = """
     <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -88,10 +83,11 @@ func generateSite(for package: Package) throws {
     let nav = """
     <nav class="navigation">
         <ul class="nav-groups">
-        <li class="nav-group-name" id="Modules">
-        <span class="nav-group-name-link">Modules</span>
-        <ul class="nav-group-tasks">
-        \(package.products.map(groupTask).joined(separator: "\n"))
+            <li class="nav-group-name" id="Modules">
+            <span class="nav-group-name-link">Modules</span>
+            <ul class="nav-group-tasks">
+            \(package.products.map(groupTask).joined(separator: "\n"))
+            </li>
         </ul>
     </nav>
     """
@@ -113,17 +109,18 @@ func generateSite(for package: Package) throws {
     """
 
     let index = """
-    \(htmlConfig)
+    <!DOCTYPE html>
+    <html lang="en">
     \(head)
-    <body>
-    <a title="dn-m"></a>
-    \(header)
-    <div class="content-wrapper>
-    \(nav)
-    \(content)
-    </div>
-    \(footer)
-    </body>
+        <body>
+        <a title="dn-m"></a>
+        \(header)
+            <div class="content-wrapper>
+                \(nav)
+                \(content)
+            </div>
+        \(footer)
+        </body>
     </html>
     """
 
