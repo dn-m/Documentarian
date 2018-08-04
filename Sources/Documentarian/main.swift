@@ -91,7 +91,7 @@ func breadcrumbs(for package: Package) -> String {
     return """
     <p class="breadcrumbs">
         <a class="breadcrumb" href="https://dn-m.github.io">dn-m</a>
-        <img class="carat" src="../Documentarian/img/carat.png"> "\(package.name)"
+        <img class="carat" src="../Documentarian/img/carat.png"> \(package.name)
     </p>
     """
 }
