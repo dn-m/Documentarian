@@ -56,15 +56,14 @@ func scripts(at path: String) -> String {
 }
 
 /// - Returns: <head> section of `index.html`.
-func head() -> String {
-    let path = "../Documentarian"
+func head(assetsPath: String) -> String {
     return """
     <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>dn-m</title>
-        \(styleSheet(at: path))
+        \(styleSheet(at: assetsPath))
         <meta charset="utf-8">
-        \(scripts(at: path))
+        \(scripts(at: assetsPath))
     </head>
     """
 }
@@ -174,7 +173,7 @@ func index(for package: Package) throws -> String {
     return """
     <!DOCTYPE html>
     <html lang="en">
-        \(head())
+    \(head(assetsPath: "../Documentarian"))
         \(body(for: package))
     </html>
     """
