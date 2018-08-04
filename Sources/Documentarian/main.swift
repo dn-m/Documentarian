@@ -181,11 +181,16 @@ func body(for package: Package) -> String {
 
 /// - Returns: The `index.html` contents for the given `package`.
 func index(for package: Package) throws -> String {
+    return html(head: head(title: "dn-m", assetsPath: "../Documentarian"), body: body(for: package))
+}
+
+/// - Returns: The html required for a site with the given `head`, and `body` elements.
+func html(head: String, body: String) -> String {
     return """
     <!DOCTYPE html>
     <html lang="en">
-        \(head(title: "dn-m", assetsPath: "../Documentarian"))
-        \(body(for: package))
+        \(head)
+        \(body)
     </html>
     """
 }
