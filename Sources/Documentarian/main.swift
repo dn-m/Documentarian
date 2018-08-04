@@ -91,8 +91,7 @@ func breadcrumbs(for package: Package) -> String {
     return """
     <p class="breadcrumbs">
         <a class="breadcrumb" href="https://dn-m.github.io">dn-m</a>
-        <img class="carat" src="img/carat.png">
-        \(package.name)
+        <img class="carat" src="../Documentarian/img/carat.png"> "\(package.name)"
     </p>
     """
 }
@@ -161,7 +160,6 @@ func footer() -> String {
 func content(for package: Package) -> String {
     return """
     <div class="content-wrapper">
-        \(breadcrumbs(for: package))
         \(navigation(for: package))
         \(abstract(for: package))
     </div>
@@ -174,6 +172,7 @@ func body(for package: Package) -> String {
     <body>
         <a title="dn-m"></a>
         \(header())
+        \(breadcrumbs(for: package))
         \(content(for: package))
     \(footer())
     </body>
