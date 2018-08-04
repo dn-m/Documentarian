@@ -40,30 +40,31 @@ func generateDocs(for module: Product, in package: Package) throws {
     run(bash: "rm \(module.name).json")
 }
 
-func styleSheet() -> String {
+func styleSheet(at path: String) -> String {
     return """
-    <link rel="stylesheet" type="text/css" href="../Documentarian/css/jazzy.css">
-    <link rel="stylesheet" type="text/css" href="../Documentarian/css/highlight.css">
+    <link rel="stylesheet" type="text/css" href="\(path)/css/jazzy.css">
+    <link rel="stylesheet" type="text/css" href="\(path)/css/highlight.css">
     """
 }
 
 /// - Returns: The scripts section of the `<head>` section for the `index.html`.
 func scripts(at path: String) -> String {
     return """
-    <script src="\(path)/jquery.min.js" defer></script>
-    <script src="\(path)/jazzy.js" defer></script>
+    <script src="\(path)/js/jquery.min.js" defer></script>
+    <script src="\(path)/js/jazzy.js" defer></script>
     """
 }
 
 /// - Returns: <head> section of `index.html`.
 func head() -> String {
+    let path = "../Documentarian"
     return """
     <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>dn-m</title>
-        \(styleSheet())
+        \(styleSheet(at: path))
         <meta charset="utf-8">
-        \(scripts(at: "../Documentarian/js"))
+        \(scripts(at: path))
     </head>
     """
 }
