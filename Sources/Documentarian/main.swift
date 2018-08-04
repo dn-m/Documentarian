@@ -148,15 +148,21 @@ func footer() -> String {
     """
 }
 
+func content(for package: Package) -> String {
+    return """
+    <div class="content-wrapper">
+        \(navigation(for: package))
+        \(abstract(for: package))
+    </div>
+    """
+}
+
 func body(for package: Package) -> String {
     return """
     <body>
         <a title="dn-m"></a>
         \(header())
-        <div class="content-wrapper">
-            \(navigation(for: package))
-            \(abstract(for: package))
-        </div>
+        \(content(for: package))
     \(footer())
     </body>
     """
