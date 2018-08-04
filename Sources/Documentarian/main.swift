@@ -40,18 +40,9 @@ func generateDocs(for module: Product, in package: Package) throws {
     run(bash: "rm \(module.name).json")
 }
 
-func groupTask(for module: Product) -> String {
+/// - Returns: <head> section of `index.html`.
+func head() -> String {
     return """
-    <li class="nav-group-task">
-        <a class="nav-group-task-link" href="Packages/\(module.name)/index.html">\(module.name)</a>
-    </li>
-    """
-}
-
-func generateSite(for package: Package) throws {
-    print("Generating site for \(package.name)")
-
-    let head = """
     <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>dn-m</title>
@@ -62,8 +53,11 @@ func generateSite(for package: Package) throws {
         <script src="../Documentarian/js/jazzy.js" defer></script>
     </head>
     """
+}
 
-    let header = """
+/// - Returns: <header> section of `index.html`.
+func header() -> String {
+    return """
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
@@ -78,55 +72,102 @@ func generateSite(for package: Package) throws {
       </p>
     </header>
     """
+}
 
-    let nav = """
+/// - Returns: The navigation item for the given `module`.
+func moduleNavigationItem(for module: Product) -> String {
+    return """
+    <li class="nav-group-task">
+        <a class="nav-group-task-link" href="Packages/\(module.name)/index.html">\(module.name)</a>
+    </li>
+    """
+}
+
+/// - Returns: All of the navigation items for a `package`.
+func moduleNavigationItems(for package: Package) -> String {
+    return """
+    <ul class="nav-group-tasks">
+        \(package.products.map(moduleNavigationItem).joined(separator: "\n"))
+    </ul>
+    """
+}
+
+/// - Returns: Navigation group with the given `name` or the given `package`.
+func navigationGroup(with name: String, for package: Package) -> String {
+    return """
+    <li class="nav-group-name" id="\(name)">
+    <span class="nav-group-name-link">\(name)</span>
+        \(moduleNavigationItems(for: package))
+    </li>
+    """
+}
+
+/// - Returns: The navigation for the given `package`.
+func navigation(for package: Package) -> String {
+    return """
     <nav class="navigation">
         <ul class="nav-groups">
-            <li class="nav-group-name" id="Modules">
-            <span class="nav-group-name-link">Modules</span>
-                <ul class="nav-group-tasks">
-                    \(package.products.map(groupTask).joined(separator: "\n"))
-                </ul>
-            </li>
+            \(navigationGroup(with: "Modules", for: package))
         </ul>
     </nav>
     """
+}
 
-    let content = """
+/// - Returns: The article `main-content` for the given `package`.
+func abstract(for package: Package) -> String {
+    return """
     <article class="main-content">
         <section class="section">
-        <div class="section-content">
-            \(run("redcarpet", "README.md").stdout)
-        </div>
+            <div class="section-content">
+                \(run("redcarpet", "README.md").stdout)
+            </div>
         </section>
     </article>
     """
+}
 
-    let footer = """
+/// - Returns: The `<footer>` for the `index.html`.
+func footer() -> String {
+    return """
     <section class="footer">
         <p>© 2018 <a class="link" href="https://github.com/dn-m" target="_blank" rel="external">dn-m</a>. All rights reserved.</p>
     </section>
     """
+}
 
-    let index = """
+func body(for package: Package) -> String {
+    return """
+    <body>
+        <a title="dn-m"></a>
+        \(header())
+        <div class="content-wrapper">
+            \(navigation(for: package))
+            \(abstract(for: package))
+        </div>
+    \(footer())
+    </body>
+    """
+}
+
+/// - Returns: The `index.html` contents for the given `package`.
+func index(for package: Package) throws -> String {
+    return """
     <!DOCTYPE html>
     <html lang="en">
-    \(head)
-        <body>
-        <a title="dn-m"></a>
-        \(header)
-            <div class="content-wrapper">
-                \(nav)
-                \(content)
-            </div>
-        \(footer)
-        </body>
+        \(head())
+        \(body(for: package))
     </html>
     """
+}
 
+/// Uses `jazzy` to generate the website for the given `package.`
+///
+/// - TODO: Add location customization point.
+func generateSite(for package: Package) throws {
+    print("Generating site for \(package.name)")
     try runAndPrint(bash: "rm -f Documentation/index.html")
     let file = try open(forWriting: "Documentation/index.html")
-    file.write(index)
+    try file.write(index(for: package))
     file.close()
 }
 
@@ -167,7 +208,6 @@ func validProducts <C> (from arguments: C, in package: Package) throws -> [Produ
 ///
 /// Otherwise, documentation for all packages will be generated.
 func main() {
-
     do {
         let package = try decodePackage()
         let arguments = CommandLine.arguments.dropFirst()
