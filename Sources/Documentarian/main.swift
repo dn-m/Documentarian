@@ -87,6 +87,16 @@ func header() -> String {
     """
 }
 
+func breadcrumbs(for package: Package) -> String {
+    return """
+    <p class="breadcrumbs">
+        <a class="breadcrumb" href="https://dn-m.github.io">dn-m</a>
+        <img class="carat" src="img/carat.png">
+        \(package.name)
+    </p>
+    """
+}
+
 /// - Returns: The navigation item for the given `module`.
 func moduleNavigationItem(for module: Product) -> String {
     return """
@@ -151,12 +161,14 @@ func footer() -> String {
 func content(for package: Package) -> String {
     return """
     <div class="content-wrapper">
+        \(breadcrumbs(for: package))
         \(navigation(for: package))
         \(abstract(for: package))
     </div>
     """
 }
 
+/// - Returns: The `body` section of the `index.html` for the given `package`.
 func body(for package: Package) -> String {
     return """
     <body>
@@ -173,7 +185,7 @@ func index(for package: Package) throws -> String {
     return """
     <!DOCTYPE html>
     <html lang="en">
-    \(head(title: "dn-m", assetsPath: "../Documentarian"))
+        \(head(title: "dn-m", assetsPath: "../Documentarian"))
         \(body(for: package))
     </html>
     """
@@ -193,6 +205,7 @@ func generateSite(for package: Package) throws {
 func pullDocSite() throws {
     #warning("Reintroduce pulling doc site when deployed")
     //try runAndPrint(bash: "git clone https://github.com/dn-m/dn-m.github.io")
+
 }
 
 func fetchAndBuildSourceKitten() throws {
