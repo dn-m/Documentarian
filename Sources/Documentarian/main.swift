@@ -48,10 +48,10 @@ func styleSheet() -> String {
 }
 
 /// - Returns: The scripts section of the `<head>` section for the `index.html`.
-func scripts() -> String {
+func scripts(at path: String) -> String {
     return """
-    <script src="../Documentarian/js/jquery.min.js" defer></script>
-    <script src="../Documentarian/js/jazzy.js" defer></script>
+    <script src="\(path)/jquery.min.js" defer></script>
+    <script src="\(path)/jazzy.js" defer></script>
     """
 }
 
@@ -63,7 +63,7 @@ func head() -> String {
         <title>dn-m</title>
         \(styleSheet())
         <meta charset="utf-8">
-        \(scripts())
+        \(scripts(at: "../Documentarian/js"))
     </head>
     """
 }
