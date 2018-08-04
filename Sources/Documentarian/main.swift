@@ -40,17 +40,30 @@ func generateDocs(for module: Product, in package: Package) throws {
     run(bash: "rm \(module.name).json")
 }
 
+func styleSheet() -> String {
+    return """
+    <link rel="stylesheet" type="text/css" href="../Documentarian/css/jazzy.css">
+    <link rel="stylesheet" type="text/css" href="../Documentarian/css/highlight.css">
+    """
+}
+
+/// - Returns: The scripts section of the `<head>` section for the `index.html`.
+func scripts() -> String {
+    return """
+    <script src="../Documentarian/js/jquery.min.js" defer></script>
+    <script src="../Documentarian/js/jazzy.js" defer></script>
+    """
+}
+
 /// - Returns: <head> section of `index.html`.
 func head() -> String {
     return """
     <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>dn-m</title>
-        <link rel="stylesheet" type="text/css" href="../Documentarian/css/jazzy.css">
-        <link rel="stylesheet" type="text/css" href="../Documentarian/css/highlight.css">
+        \(styleSheet())
         <meta charset="utf-8">
-        <script src="../Documentarian/js/jquery.min.js" defer></script>
-        <script src="../Documentarian/js/jazzy.js" defer></script>
+        \(scripts())
     </head>
     """
 }
