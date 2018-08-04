@@ -170,7 +170,7 @@ func content(for package: Package) -> String {
 func body(for package: Package) -> String {
     return """
     <body>
-        <a title="dn-m"></a>
+        <a title="dn-m | \(package.name)"></a>
         \(header())
         \(breadcrumbs(for: package))
         \(content(for: package))
@@ -181,7 +181,10 @@ func body(for package: Package) -> String {
 
 /// - Returns: The `index.html` contents for the given `package`.
 func index(for package: Package) throws -> String {
-    return html(head: head(title: "dn-m", assetsPath: "../Documentarian"), body: body(for: package))
+    return html(
+        head: head(title: "dn-m", assetsPath: "../Documentarian"),
+        body: body(for: package)
+    )
 }
 
 /// - Returns: The html required for a site with the given `head`, and `body` elements.
@@ -195,21 +198,37 @@ func html(head: String, body: String) -> String {
     """
 }
 
+/// - Returns: The `index.html` for `dn-m.github.io`.
+func home() -> String {
+    // header
+    func content() -> String {
+        return "<p>Home</p>"
+    }
+    return head(title: "dn-m | Home", assetsPath: "../Documentarian") + content()
+}
+
 /// Uses `jazzy` to generate the website for the given `package.`
 ///
 /// - TODO: Add location customization point.
-func generateSite(for package: Package) throws {
+func generateSite(for package: Package, at outputPath: String) throws {
     print("Generating site for \(package.name)")
-    try runAndPrint(bash: "rm -f Documentation/index.html")
-    let file = try open(forWriting: "Documentation/index.html")
-    try file.write(index(for: package))
+    try runAndPrint(bash: "rm -f \(outputPath)/index.html")
+    let file = try open(forWriting: outputPath.appending("/index.html"))
+    file.write(try index(for: package))
+    file.close()
+}
+
+func generateHome() throws {
+    print("Generating home")
+    try runAndPrint(bash: "rm -f index.html")
+    let file = try open(forWriting: "index.html")
+    file.write(home())
     file.close()
 }
 
 func pullDocSite() throws {
-    #warning("Reintroduce pulling doc site when deployed")
-    //try runAndPrint(bash: "git clone https://github.com/dn-m/dn-m.github.io")
-
+    print("Cloning dn-m.github.io source")
+    try runAndPrint(bash: "git clone https://github.com/dn-m/dn-m.github.io")
 }
 
 func fetchAndBuildSourceKitten() throws {
@@ -249,9 +268,10 @@ func main() {
         let arguments = CommandLine.arguments.dropFirst()
         let products = try validProducts(from: arguments, in: package)
         try fetchAndBuildSourceKitten()
-        try generateDocs(for: products, in: package)
-        try generateSite(for: package)
         try pullDocSite()
+        try generateDocs(for: products, in: package)
+        try generateSite(for: package, at: "Documentation")
+        try generateHome()
     } catch {
         print(error)
     }
