@@ -24,11 +24,12 @@ func generateDocs(for modules: [Product], in package: Package) throws {
     try modules.forEach { try generateDocs(for: $0, in: package) }
 }
 
-/// Generates documentation for the given `module` in the given `package`.
-func generateDocs(for module: Product, in package: Package) throws {
-    print("Generating documentation for the \(module.name) module")
-    run(bash: "SourceKitten/.build/debug/sourcekitten doc --spm-module \(module.name) > \(module.name).json")
-    run(bash: """
+func runSourceKitten(for module: Product) -> String {
+    return "SourceKitten/.build/debug/sourcekitten doc --spm-module \(module.name) > \(module.name).json"
+}
+
+func runJazzy(for module: Product) -> String {
+    return """
         jazzy \\
         -s \(module.name).json \\
         --config ./Sources/\(module.name)/Documentation/.jazzy.yaml \\
@@ -36,8 +37,18 @@ func generateDocs(for module: Product, in package: Package) throws {
         --theme fullwidth \\
         --abstract ./Sources/\(module.name)/Documentation/*
         """
-    )
-    run(bash: "rm \(module.name).json")
+}
+
+func cleanUpJazzy(for module: Product) -> String {
+    return "rm \(module.name).json"
+}
+
+/// Generates documentation for the given `module` in the given `package`.
+func generateDocs(for module: Product, in package: Package) throws {
+    print("Generating documentation for the \(module.name) module")
+    run(bash: runSourceKitten(for: module))
+    run(bash: runJazzy(for: module))
+    run(bash: cleanUpJazzy(for: module))
 }
 
 func styleSheet(at path: String) -> String {
