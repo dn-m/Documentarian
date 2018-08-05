@@ -242,10 +242,14 @@ func pullDocSite() throws {
     try runAndPrint(bash: "git clone https://github.com/dn-m/dn-m.github.io")
 }
 
+func buildSourceKittenIfNecessary() -> String {
+    return "if cd SourceKitten; then git pull; else git clone https://github.com/jpsim/SourceKitten; fi"
+}
+
 func fetchAndBuildSourceKitten() throws {
     print("Fetching SourceKitten...")
     try runAndPrint(bash: "rm -f .swift-version")
-    try runAndPrint(bash: "if cd SourceKitten; then git pull; else git clone https://github.com/jpsim/SourceKitten; fi")
+    try runAndPrint(bash: buildSourceKittenIfNecessary())
     run(bash: "cd SourceKitten")
     print("Building SourceKitten...")
     try runAndPrint(bash: "swift build --package-path SourceKitten")
