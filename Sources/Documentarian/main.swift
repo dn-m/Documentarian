@@ -237,9 +237,13 @@ func generateHome() throws {
     file.close()
 }
 
+func cloneSiteIfNecessary() -> String {
+    return "if cd dn-m.github.io; then git pull origin master; else git clone https://github.com/dn-m/dn-m.github.io; fi"
+}
+
 func pullDocSite() throws {
-    print("Cloning dn-m.github.io source")
-    try runAndPrint(bash: "git clone https://github.com/dn-m/dn-m.github.io")
+    print("Cloning and updating dn-m.github.io source")
+    try runAndPrint(bash: cloneSiteIfNecessary())
 }
 
 func buildSourceKittenIfNecessary() -> String {
