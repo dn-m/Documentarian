@@ -30,13 +30,13 @@ func runSourceKitten(for module: Product) -> String {
 
 func runJazzy(for module: Product) -> String {
     return """
-        jazzy \\
-        --sourcekitten-sourcefile \(module.name).json \\
-        --config ./Sources/\(module.name)/Documentation/.jazzy.yaml \\
-        --output Documentation/Packages/\(module.name) \\
-        --theme fullwidth \\
-        --abstract ./Sources/\(module.name)/Documentation/*
-        """
+    jazzy \\
+    --sourcekitten-sourcefile \(module.name).json \\
+    --config ./Sources/\(module.name)/Documentation/.jazzy.yaml \\
+    --output Documentation/Packages/\(module.name) \\
+    --theme fullwidth \\
+    --abstract ./Sources/\(module.name)/Documentation/*
+    """
 }
 
 func cleanUpJazzyArtifacts(for module: Product) -> String {
@@ -168,6 +168,7 @@ func footer() -> String {
     """
 }
 
+/// - Returns: The content wrapper div, including the navigation pane and frontmatter.
 func content(for package: Package) -> String {
     return """
     <div class="content-wrapper">
@@ -219,12 +220,11 @@ func home() -> String {
 }
 
 /// Uses `jazzy` to generate the website for the given `package.`
-///
-/// - TODO: Add location customization point.
 func generateSite(for package: Package, at outputPath: String) throws {
     print("Generating site for \(package.name)")
     try runAndPrint(bash: "rm -f \(outputPath)/index.html")
-    let file = try open(forWriting: outputPath.appending("/index.html"))
+    let filePath = outputPath.appending("/index.html")
+    let file = try open(forWriting: filePath)
     file.write(try index(for: package))
     file.close()
 }
@@ -260,17 +260,21 @@ enum Error: Swift.Error {
     case invalidModuleName(String)
 }
 
-func validProducts <C> (from arguments: C, in package: Package) throws -> [Product]
+/// - Returns: The modules from the given list of `potentialModuleNames` if they match up with
+/// actual module names in the given `package`.
+func validModules <C> (from potentialModuleNames: C, in package: Package) throws -> [Product]
     where C: Collection, C.Element == String
 {
-    guard !arguments.isEmpty else { return package.products }
+    // If no module names are given, build all modules
+    guard !potentialModuleNames.isEmpty else { return package.products }
     let actualModuleNames = package.products.map { $0.name }
-    for potentialModuleName in arguments {
+    // If any of the given potential module names are not found in the given `package`, throw error
+    for potentialModuleName in potentialModuleNames {
         guard actualModuleNames.contains(potentialModuleName) else {
             throw Error.invalidModuleName(potentialModuleName)
         }
     }
-    return arguments.map(Product.init)
+    return potentialModuleNames.map(Product.init)
 }
 
 /// Generates documentation for the local Swift Package. If you only want to generate the
@@ -281,7 +285,7 @@ func main() {
     do {
         let package = try decodePackage()
         let arguments = CommandLine.arguments.dropFirst()
-        let products = try validProducts(from: arguments, in: package)
+        let products = try validModules(from: arguments, in: package)
         try fetchAndBuildSourceKitten()
         try pullDocSite()
         try generateDocs(for: products, in: package)
