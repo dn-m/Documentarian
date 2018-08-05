@@ -31,7 +31,7 @@ func runSourceKitten(for module: Product) -> String {
 func runJazzy(for module: Product) -> String {
     return """
         jazzy \\
-        -s \(module.name).json \\
+        --sourcekitten-sourcefile \(module.name).json \\
         --config ./Sources/\(module.name)/Documentation/.jazzy.yaml \\
         --output Documentation/Packages/\(module.name) \\
         --theme fullwidth \\
@@ -39,7 +39,7 @@ func runJazzy(for module: Product) -> String {
         """
 }
 
-func cleanUpJazzy(for module: Product) -> String {
+func cleanUpJazzyArtifacts(for module: Product) -> String {
     return "rm \(module.name).json"
 }
 
@@ -48,7 +48,7 @@ func generateDocs(for module: Product, in package: Package) throws {
     print("Generating documentation for the \(module.name) module")
     run(bash: runSourceKitten(for: module))
     run(bash: runJazzy(for: module))
-    run(bash: cleanUpJazzy(for: module))
+    run(bash: cleanUpJazzyArtifacts(for: module))
 }
 
 func styleSheet(at path: String) -> String {
