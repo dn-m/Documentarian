@@ -104,7 +104,7 @@ func pullSiteRepo() throws {
 
 func commitUpdates(for package: Package) throws {
     try runAndPrint(bash: """
-    git -c user.name='travis' -c user.email='travis' commit -am 'Update documentation for the \(package.name) package'
+    git -c user.name='jsbean' -c user.email='$GITHUB_TOKEN' commit -am 'Update documentation for the \(package.name) package'
     """)
 }
 
