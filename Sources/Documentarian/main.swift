@@ -2,9 +2,6 @@ import Foundation
 import SwiftShell
 import Files
 
-// TODO: Inject this into functions directly.
-let GITHUB_TOKEN = ProcessInfo.processInfo.environment["GITHUB_TOKEN"]
-
 enum Error: Swift.Error {
     case invalidModuleName(String)
     case personalAccessTokenNotFound
@@ -18,8 +15,12 @@ func main() throws {
     try fetchAndBuildSourceKitten()
     // Install `jazzy`, to be used to generate documentation from `SourceKitten` artifacts.
     try installJazzy()
+    // Don't even bother if there is no Github personal access token.
+    guard let token = ProcessInfo.processInfo.environment["GITHUB_TOKEN"] else {
+        throw Error.personalAccessTokenNotFound
+    }
     // Clone / update the dn-m/dn-m.github.io repo
-    try pullSiteRepo()
+    try pullSiteRepo(with: token)
     // Create the directory infrastructure for the documentation of the package we are visiting
     try prepareDirectories(for: package, in: "dn-m.github.io")
     // Generate the documentation for package we are visiting
@@ -31,7 +32,7 @@ func main() throws {
     // Update the home page to reflect the changes.
     try generateHome(in: "dn-m.github.io", assetsPath: "../assets")
     // Attempt to push updates to github repo. This will require auth.
-    try pushSiteRepo(for: package)
+    try pushSiteRepo(for: package, with: token)
     print("Successfully pushed site to GitHub!")
 }
 

@@ -7,7 +7,6 @@
 
 import SwiftShell
 
-func commitUpdates(for package: Package) throws {
-    guard let token = GITHUB_TOKEN else { throw Error.personalAccessTokenNotFound }
+func commitUpdates(for package: Package, with token: String) throws {
     try runAndPrint(bash: "git -c user.name='jsbean' -c user.email='\(token)' commit -am 'Update documentation for the \(package.name) package'")
 }
