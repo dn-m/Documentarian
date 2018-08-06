@@ -83,10 +83,6 @@ func fetchAndBuildSourceKitten() throws {
     run(bash: "cd ..")
 }
 
-enum Error: Swift.Error {
-    case invalidModuleName(String)
-}
-
 func prepareDirectories(for package: Package, in directoryPath: String) throws {
     run(bash: "rm -rf \(directoryPath)/Packages\(package.name)/*")
     package.products.forEach { module in
@@ -102,19 +98,34 @@ func path(for module: Product, in package: Package, from root: String) -> String
     return "\(path(for: package, from: root))/Modules/\(module.name)"
 }
 
+enum Error: Swift.Error {
+    case invalidModuleName(String)
+}
+
 /// Generates documentation for the local Swift Package.
 func main() {
     do {
         let package = try decodePackage()
+        // Clone SourceKitten if necessary, which scrapes documentable info from source code
         try fetchAndBuildSourceKitten()
+        // Clone / update the dn-m/dn-m.github.io repo
         try pullDocSite()
+        // Create the directory infrastructure for the documentation of the package we are visiting
         try prepareDirectories(for: package, in: "dn-m.github.io")
+        // Generate the documentation for package we are visiting
         try generateDocs(
             for: package,
             in: "dn-m.github.io/Packages/\(package.name)",
             assetsPath: "../../../Documentarian/assets"
         )
+        // Update the home page to reflect the changes.
         try generateHome(in: "dn-m.github.io", assetsPath: "../Documentarian/assets")
+
+        // Attempt to push updates to github repo. This will require auth.
+        run(bash: "cd dn-m.github.io")
+        try runAndPrint(bash: "git commit -m 'Update documentation for the \(package.name) package'")
+        try runAndPrint(bash: "git push origin master")
+        run(bash: "cd ..")
     } catch {
         print(error)
     }
