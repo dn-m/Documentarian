@@ -104,7 +104,7 @@ func path(for module: Product, in package: Package, from root: String) -> String
 
 func commitUpdates(for package: Package) throws {
     try runAndPrint(bash: """
-    git -c user.name='travis' -c user.email='travis' commit -am 'Update documentation for the \(package.name) package)'
+    git -c user.name='travis' -c user.email='travis' commit -am 'Update documentation for the \(package.name) package'
     """)
 }
 
