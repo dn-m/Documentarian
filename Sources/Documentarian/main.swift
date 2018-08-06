@@ -113,7 +113,7 @@ func pushUpdates() throws {
     try runAndPrint(bash: """
     if [ -n $GITHUB_TOKEN ]; then
     echo Be there a github token!
-    git push -f -q https://jsbean:\(GITHUB_TOKEN)@github.com/dn-m/dn-m.github.io master &2>/dev/null
+    git push -f https://jsbean:\(GITHUB_TOKEN)@github.com/dn-m/dn-m.github.io master &2>/dev/null
     fi
     """)
 }
