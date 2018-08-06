@@ -68,7 +68,7 @@ func cloneSiteIfNecessary() -> String {
     return "if cd dn-m.github.io; then git pull origin master; else git clone https://github.com/dn-m/dn-m.github.io; fi"
 }
 
-func pullDocSite() throws {
+func pullSiteRepo() throws {
     print("Cloning and updating dn-m.github.io source")
     try runAndPrint(bash: cloneSiteIfNecessary())
 }
@@ -102,50 +102,53 @@ func path(for module: Product, in package: Package, from root: String) -> String
     return "\(path(for: package, from: root))/Modules/\(module.name)"
 }
 
+func commitUpdates(for package: Package) throws {
+    try runAndPrint(bash: """
+    git -c user.name='travis' -c user.email='travis' commit -am 'Update documentation for the \(package.name) package)'
+    """)
+}
+
+func pushUpdates(for package: Package) throws {
+    try runAndPrint(bash: """
+    if [ -n $GITHUB_TOKEN ]; then
+    git push -f -q https://jsbean:$GITHUB_TOKEN@github.com/dn-m/\(package.name) master &2>/dev/null
+    fi
+    """)
+}
+
+func pushSiteRepo(for package: Package) throws {
+    SwiftShell.main.currentdirectory = "dn-m.github.io"
+    try commitUpdates(for: package)
+    try pushUpdates(for: package)
+    SwiftShell.main.currentdirectory = ".."
+}
+
 enum Error: Swift.Error {
     case invalidModuleName(String)
 }
 
 /// Generates documentation for the local Swift Package.
-func main() {
-    do {
-        // Infer a model of the package from the `Package.swift` manifest
-        let package = try decodePackage()
-        // Installs jazzy, to be used to generate documentation from SourceKitten artifacts
-        try installJazzy()
-        // Clone SourceKitten if necessary, which scrapes documentable info from source code
-        try fetchAndBuildSourceKitten()
-        // Clone / update the dn-m/dn-m.github.io repo
-        try pullDocSite()
-        // Create the directory infrastructure for the documentation of the package we are visiting
-        try prepareDirectories(for: package, in: "dn-m.github.io")
-        // Generate the documentation for package we are visiting
-        try generateDocs(
-            for: package,
-            in: "dn-m.github.io/Packages/\(package.name)",
-            assetsPath: "../../../assets"
-        )
-        // Update the home page to reflect the changes.
-        try generateHome(in: "dn-m.github.io", assetsPath: "../assets")
-
-        // Attempt to push updates to github repo. This will require auth.
-        SwiftShell.main.currentdirectory = "dn-m.github.io"
-        try runAndPrint(bash: "pwd")
-        try runAndPrint(bash: """
-        if [ -n $GITHUB_TOKEN ]; then
-            echo "Be there a github token present!"
-            git -c user.name='travis' -c user.email='travis'
-            echo "Git configuration set to travis travis"
-            git commit -am 'Update documentation for the \(package.name) package)'
-            echo "Staged and committed files"
-            git push -f -q https://jsbean:$GITHUB_TOKEN@github.com/dn-m/\(package.name) master &2>/dev/null
-            echo "Pushed files to dn-m.github.io repo"
-        fi
-        """)
-        SwiftShell.main.currentdirectory = ".."
-    } catch {
-        print(error)
-    }
+func main() throws {
+    // Infer a model of the package from the `Package.swift` manifest file.
+    let package = try decodePackage()
+    // Clone `SourceKitten` if necessary, which scrapes documentation from Swift source code.
+    try fetchAndBuildSourceKitten()
+    // Install `jazzy`, to be used to generate documentation from `SourceKitten` artifacts.
+    try installJazzy()
+    // Clone / update the dn-m/dn-m.github.io repo
+    try pullSiteRepo()
+    // Create the directory infrastructure for the documentation of the package we are visiting
+    try prepareDirectories(for: package, in: "dn-m.github.io")
+    // Generate the documentation for package we are visiting
+    try generateDocs(
+        for: package,
+        in: "dn-m.github.io/Packages/\(package.name)",
+        assetsPath: "../../../assets"
+    )
+    // Update the home page to reflect the changes.
+    try generateHome(in: "dn-m.github.io", assetsPath: "../assets")
+    // Attempt to push updates to github repo. This will require auth.
+    try pushSiteRepo(for: package)
 }
 
-main()
+try main()
