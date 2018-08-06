@@ -20,7 +20,6 @@ func pullSiteRepo(with token: String) throws {
 
 func pushUpdates(with token: String) throws {
     print("Pushing updates to the dn-m.github.io site repository...")
-    print("We have a token (length: \(token.count), about to push up to Github!")
     try runAndPrint(bash: "git push -f https://jsbean:\(token)@github.com/dn-m/dn-m.github.io master")
 }
 
