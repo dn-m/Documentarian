@@ -132,8 +132,8 @@ func main() {
         try runAndPrint(bash: "pwd")
         try runAndPrint(bash: """
         if [ -n $GITHUB_TOKEN ]; then
-            git -c user.name='travis' -c user.email='travis' commit -m init
-            git commit -am 'Update documentation for the \(package.name) package'
+            git -c user.name='travis' -c user.email='travis'
+            git commit -am 'Update documentation for the \(package.name) package)'
             git push -f -q https://jsbean:$GITHUB_TOKEN@github.com/dn-m/\(package.name) master &2>/dev/null
         fi
         """)
