@@ -64,15 +64,6 @@ func generateHome(in directoryPath: String, assetsPath: String) throws {
     file.close()
 }
 
-func cloneSiteIfNecessary() -> String {
-    return "if cd dn-m.github.io; then git pull origin master; else git clone https://github.com/dn-m/dn-m.github.io; fi"
-}
-
-func pullSiteRepo() throws {
-    print("Cloning and updating dn-m.github.io source")
-    try runAndPrint(bash: cloneSiteIfNecessary())
-}
-
 func buildSourceKittenIfNecessary() -> String {
     return "if cd SourceKitten; then git pull; else git clone https://github.com/jpsim/SourceKitten; fi"
 }
@@ -102,6 +93,15 @@ func path(for module: Product, in package: Package, from root: String) -> String
     return "\(path(for: package, from: root))/Modules/\(module.name)"
 }
 
+func cloneSiteIfNecessary() -> String {
+    return "if cd dn-m.github.io; then git pull origin master; else git clone https://jsbean:$GITHUB_TOKEN@github.com/dn-m/dn-m.github.io; fi"
+}
+
+func pullSiteRepo() throws {
+    print("Cloning and updating dn-m.github.io source")
+    try runAndPrint(bash: cloneSiteIfNecessary())
+}
+
 func commitUpdates(for package: Package) throws {
     try runAndPrint(bash: """
     git -c user.name='travis' -c user.email='travis' commit -am 'Update documentation for the \(package.name) package'
@@ -109,6 +109,7 @@ func commitUpdates(for package: Package) throws {
 }
 
 func pushUpdates() throws {
+    print("Pushing updates to the `github.com/dn-m/dn-m.github.io` repository...")
     try runAndPrint(bash: """
     if [ -n $GITHUB_TOKEN ]; then
     echo Be there a github token!
