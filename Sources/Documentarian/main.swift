@@ -148,4 +148,9 @@ func main() throws {
     try pushSiteRepo(for: package)
 }
 
-try main()
+do {
+    try main()
+} catch {
+    print(error)
+}
+
