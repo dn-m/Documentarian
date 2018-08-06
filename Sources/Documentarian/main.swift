@@ -109,7 +109,7 @@ enum Error: Swift.Error {
 /// Generates documentation for the local Swift Package.
 func main() {
     do {
-        // Infer a model of the package from the `Package.swift` file.
+        // Infer a model of the package from the `Package.swift` manifest
         let package = try decodePackage()
         // Installs jazzy, to be used to generate documentation from SourceKitten artifacts
         try installJazzy()
@@ -133,9 +133,13 @@ func main() {
         try runAndPrint(bash: "pwd")
         try runAndPrint(bash: """
         if [ -n $GITHUB_TOKEN ]; then
+            echo "Be there a github token present!"
             git -c user.name='travis' -c user.email='travis'
+            echo "Git configuration set to travis travis"
             git commit -am 'Update documentation for the \(package.name) package)'
+            echo "Staged and committed files"
             git push -f -q https://jsbean:$GITHUB_TOKEN@github.com/dn-m/\(package.name) master &2>/dev/null
+            echo "Pushed files to dn-m.github.io repo"
         fi
         """)
         SwiftShell.main.currentdirectory = ".."
