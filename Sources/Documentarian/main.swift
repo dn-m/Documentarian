@@ -13,6 +13,10 @@ func runSourceKitten(for module: Product) -> String {
     return "SourceKitten/.build/debug/sourcekitten doc --spm-module \(module.name) > \(module.name).json"
 }
 
+func installJazzy() throws {
+    try runAndPrint(bash: "sudo gem install jazzy")
+}
+
 func runJazzy(for module: Product, outputDirectory: String) -> String {
     return """
     jazzy \\
@@ -106,6 +110,8 @@ enum Error: Swift.Error {
 func main() {
     do {
         let package = try decodePackage()
+        // Installs jazzy, to be used to generate documentation from SourceKitten artifacts
+        try installJazzy()
         // Clone SourceKitten if necessary, which scrapes documentable info from source code
         try fetchAndBuildSourceKitten()
         // Clone / update the dn-m/dn-m.github.io repo
