@@ -108,10 +108,11 @@ func commitUpdates(for package: Package) throws {
     """)
 }
 
-func pushUpdates(for package: Package) throws {
+func pushUpdates() throws {
     try runAndPrint(bash: """
     if [ -n $GITHUB_TOKEN ]; then
-    git push -f -q https://jsbean:$GITHUB_TOKEN@github.com/dn-m/\(package.name) master &2>/dev/null
+    echo Be there a github token!
+    git push -f -q https://jsbean:$GITHUB_TOKEN@github.com/dn-m/dn-m.github.io master &2>/dev/null
     fi
     """)
 }
@@ -119,7 +120,7 @@ func pushUpdates(for package: Package) throws {
 func pushSiteRepo(for package: Package) throws {
     SwiftShell.main.currentdirectory = "dn-m.github.io"
     try commitUpdates(for: package)
-    try pushUpdates(for: package)
+    try pushUpdates()
     SwiftShell.main.currentdirectory = ".."
 }
 
