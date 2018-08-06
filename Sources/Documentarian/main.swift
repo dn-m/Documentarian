@@ -2,7 +2,7 @@ import Foundation
 import SwiftShell
 import Files
 
-let GITHUB_TOKEN = ProcessInfo.processInfo.environment["GITHUB_TOKEN"]!
+let GITHUB_TOKEN = ProcessInfo.processInfo.environment["GITHUB_TOKEN"]
 
 /// - Returns: A `Package` for the given Swift Package repository.
 func decodePackage() throws -> Package {
@@ -16,7 +16,6 @@ func runSourceKitten(for module: Product) -> String {
 }
 
 func installJazzy() throws {
-    print("attempting to install jazzy: \(Folder.current)")
     try runAndPrint(bash: "sudo gem install jazzy")
 }
 
@@ -93,29 +92,24 @@ func path(for module: Product, in package: Package, from root: String) -> String
 }
 
 func pullSiteRepo() throws {
+    guard let token = GITHUB_TOKEN else { throw Error.personalAccessTokenNotFound }
     if !Folder.current.containsSubfolder(named: "dn-m.github.io") {
-        try runAndPrint(bash: "git clone https://jsbean:\(GITHUB_TOKEN)@github.com/dn-m/dn-m.github.io")
+        try runAndPrint(bash: "git clone https://jsbean:\(token)@github.com/dn-m/dn-m.github.io")
     }
     SwiftShell.main.currentdirectory = "dn-m.github.io"
     try runAndPrint(bash: "git pull origin master")
     SwiftShell.main.currentdirectory = ".."
-    print("pulled site repo")
 }
 
 func commitUpdates(for package: Package) throws {
-    try runAndPrint(bash: """
-    git -c user.name='jsbean' -c user.email='\(GITHUB_TOKEN)' commit -am 'Update documentation for the \(package.name) package'
-    """)
+    guard let token = GITHUB_TOKEN else { throw Error.personalAccessTokenNotFound }
+    try runAndPrint(bash: "git -c user.name='jsbean' -c user.email='\(token)' commit -am 'Update documentation for the \(package.name) package'")
 }
 
 func pushUpdates() throws {
     print("Pushing updates to the `github.com/dn-m/dn-m.github.io` repository...")
-    try runAndPrint(bash: """
-    if [ -n $GITHUB_TOKEN ]; then
-    echo Be there a github token!
-    git push -f https://jsbean:\(GITHUB_TOKEN)@github.com/dn-m/dn-m.github.io master &2>/dev/null
-    fi
-    """)
+    guard let token = GITHUB_TOKEN else { throw Error.personalAccessTokenNotFound }
+    try runAndPrint(bash: "git push -f https://jsbean:\(token)@github.com/dn-m/dn-m.github.io master &2>/dev/null")
 }
 
 func pushSiteRepo(for package: Package) throws {
@@ -127,6 +121,7 @@ func pushSiteRepo(for package: Package) throws {
 
 enum Error: Swift.Error {
     case invalidModuleName(String)
+    case personalAccessTokenNotFound
 }
 
 /// Generates documentation for the local Swift Package.
