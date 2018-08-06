@@ -8,6 +8,7 @@
 import SwiftShell
 
 func installJazzy() throws {
+    print("Installing jazzy...")
     try runAndPrint(bash: "sudo gem install jazzy")
 }
 

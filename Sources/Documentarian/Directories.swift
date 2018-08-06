@@ -8,6 +8,7 @@
 import SwiftShell
 
 func prepareDirectories(for package: Package, in directoryPath: String) throws {
+    print("Preparing directory structure for the documentation of the \(package) package...")
     run(bash: "rm -rf \(directoryPath)/Packages\(package.name)/*")
     package.products.forEach { module in
         run(bash: "mkdir -p \(path(for: module, in: package, from: directoryPath))")

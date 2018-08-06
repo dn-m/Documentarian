@@ -104,13 +104,14 @@ func index(for package: Package, assetsPath: String) -> String {
 /// Generates documentation for the given `module` in the given `package`.
 func generateDocs(for module: Product, in packageDirectory: String) throws {
     let moduleDirectory = "\(packageDirectory)/Modules/\(module.name)"
-    print("Generating documentation for the \(module.name) module in \(moduleDirectory)...")
+    print("Generating documentation for the \(module.name) module...")
     run(bash: runSourceKitten(for: module))
     try runAndPrint(bash: runJazzy(for: module, outputDirectory: moduleDirectory))
     run(bash: cleanUpJazzyArtifacts(for: module))
 }
 
 func generateHomeIndex(for package: Package, in directoryPath: String, assetsPath: String) throws {
+    print("Generating the home page for the \(package) package...")
     let file = try File(path: "\(directoryPath)/index.html")
     try file.delete()
     try file.write(string: index(for: package, assetsPath: assetsPath))

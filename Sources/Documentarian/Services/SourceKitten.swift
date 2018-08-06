@@ -16,7 +16,6 @@ func fetchAndBuildSourceKitten() throws {
     try runAndPrint(bash: "rm -f .swift-version")
     print("Building SourceKitten...")
     try runAndPrint(bash: "swift build")
-    print("Done building SourceKitten")
     SwiftShell.main.currentdirectory = ".."
 }
 
