@@ -6,6 +6,7 @@
 //
 
 import SwiftShell
+import Files
 
 func breadcrumbs(for package: Package, assetsPath: String) -> String {
     return """
@@ -98,4 +99,26 @@ func index(for package: Package, assetsPath: String) -> String {
         head: head(title: "dn-m | \(package.name)", assetsPath: assetsPath),
         body: body(for: package, assetsPath: assetsPath)
     )
+}
+
+/// Generates documentation for the given `module` in the given `package`.
+func generateDocs(for module: Product, in packageDirectory: String) throws {
+    let moduleDirectory = "\(packageDirectory)/Modules/\(module.name)"
+    print("Generating documentation for the \(module.name) module in \(moduleDirectory)...")
+    run(bash: runSourceKitten(for: module))
+    try runAndPrint(bash: runJazzy(for: module, outputDirectory: moduleDirectory))
+    run(bash: cleanUpJazzyArtifacts(for: module))
+}
+
+func generateHomeIndex(for package: Package, in directoryPath: String, assetsPath: String) throws {
+    let file = try File(path: "\(directoryPath)/index.html")
+    try file.delete()
+    try file.write(string: index(for: package, assetsPath: assetsPath))
+}
+
+/// Generates documentation for all of the given `modules` in the given `package`, and creates a
+/// home `index.html` for the package.
+func generateDocs(for package: Package, in directoryPath: String, assetsPath: String) throws {
+    try generateHomeIndex(for: package, in: directoryPath, assetsPath: assetsPath)
+    try package.products.forEach { try generateDocs(for: $0, in: "\(directoryPath)") }
 }

@@ -90,3 +90,10 @@ func packages(from directoryPath: String) throws -> [Package] {
         )
     }
 }
+
+/// Generates the documentation for the entire dn-m project.
+func generateHome(in directoryPath: String, assetsPath: String) throws {
+    let file = try File(path: "\(directoryPath)/index.html")
+    try file.delete()
+    try file.write(string: index(for: try packages(from: directoryPath), assetsPath: assetsPath))
+}
