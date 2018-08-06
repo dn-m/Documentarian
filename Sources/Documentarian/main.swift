@@ -2,6 +2,8 @@ import Foundation
 import SwiftShell
 import Files
 
+let GITHUB_TOKEN = ProcessInfo.processInfo.environment["GITHUB_TOKEN"]!
+
 /// - Returns: A `Package` for the given Swift Package repository.
 func decodePackage() throws -> Package {
     let data = run(bash: "swift package dump-package").stdout.data(using: .utf8)!
@@ -14,6 +16,7 @@ func runSourceKitten(for module: Product) -> String {
 }
 
 func installJazzy() throws {
+    print("attempting to install jazzy: \(Folder.current)")
     try runAndPrint(bash: "sudo gem install jazzy")
 }
 
@@ -25,7 +28,8 @@ func runJazzy(for module: Product, outputDirectory: String) -> String {
     --output \(outputDirectory) \\
     --theme fullwidth \\
     --abstract ./Sources/\(module.name)/Documentation/* \\
-    --disable-search
+    --disable-search \\
+    --clean \\
     """
 }
 
@@ -43,9 +47,9 @@ func generateDocs(for module: Product, in packageDirectory: String) throws {
 }
 
 func generateHomeIndex(for package: Package, in directoryPath: String, assetsPath: String) throws {
-    let file = try open(forWriting: "\(directoryPath)/index.html")
-    file.write(index(for: package, assetsPath: assetsPath))
-    file.close()
+    let file = try File(path: "\(directoryPath)/index.html")
+    try file.delete()
+    try file.write(string: index(for: package, assetsPath: assetsPath))
 }
 
 /// Generates documentation for all of the given `modules` in the given `package`, and creates a
@@ -56,26 +60,21 @@ func generateDocs(for package: Package, in directoryPath: String, assetsPath: St
 }
 /// Generates the documentation for the entire dn-m project.
 func generateHome(in directoryPath: String, assetsPath: String) throws {
-    print("Generating home in \(directoryPath)")
-    let indexPath = "\(directoryPath)/index.html"
-    try runAndPrint(bash: "rm -f \(indexPath)")
-    let file = try open(forWriting: "\(indexPath)")
-    file.write(index(for: try packages(from: directoryPath), assetsPath: assetsPath))
-    file.close()
-}
-
-func buildSourceKittenIfNecessary() -> String {
-    return "if cd SourceKitten; then git pull; else git clone https://github.com/jpsim/SourceKitten; fi"
+    let file = try File(path: "\(directoryPath)/index.html")
+    try file.delete()
+    try file.write(string: index(for: try packages(from: directoryPath), assetsPath: assetsPath))
 }
 
 func fetchAndBuildSourceKitten() throws {
-    print("Fetching SourceKitten...")
+    if !Folder.current.containsSubfolder(named: "SourceKitten") {
+        try runAndPrint(bash: "git clone https://github.com/jpsim/SourceKitten")
+    }
+    SwiftShell.main.currentdirectory = "SourceKitten"
     try runAndPrint(bash: "rm -f .swift-version")
-    try runAndPrint(bash: buildSourceKittenIfNecessary())
-    run(bash: "cd SourceKitten")
     print("Building SourceKitten...")
-    try runAndPrint(bash: "swift build --package-path SourceKitten")
-    run(bash: "cd ..")
+    try runAndPrint(bash: "swift build")
+    print("Done building SourceKitten")
+    SwiftShell.main.currentdirectory = ".."
 }
 
 func prepareDirectories(for package: Package, in directoryPath: String) throws {
@@ -93,18 +92,19 @@ func path(for module: Product, in package: Package, from root: String) -> String
     return "\(path(for: package, from: root))/Modules/\(module.name)"
 }
 
-func cloneSiteIfNecessary() -> String {
-    return "if cd dn-m.github.io; then git pull origin master; else git clone https://jsbean:$GITHUB_TOKEN@github.com/dn-m/dn-m.github.io; fi"
-}
-
 func pullSiteRepo() throws {
-    print("Cloning and updating dn-m.github.io source")
-    try runAndPrint(bash: cloneSiteIfNecessary())
+    if !Folder.current.containsSubfolder(named: "dn-m.github.io") {
+        try runAndPrint(bash: "git clone https://jsbean:\(GITHUB_TOKEN)@github.com/dn-m/dn-m.github.io")
+    }
+    SwiftShell.main.currentdirectory = "dn-m.github.io"
+    try runAndPrint(bash: "git pull origin master")
+    SwiftShell.main.currentdirectory = ".."
+    print("pulled site repo")
 }
 
 func commitUpdates(for package: Package) throws {
     try runAndPrint(bash: """
-    git -c user.name='jsbean' -c user.email='$GITHUB_TOKEN' commit -am 'Update documentation for the \(package.name) package'
+    git -c user.name='jsbean' -c user.email='\(GITHUB_TOKEN)' commit -am 'Update documentation for the \(package.name) package'
     """)
 }
 
@@ -113,7 +113,7 @@ func pushUpdates() throws {
     try runAndPrint(bash: """
     if [ -n $GITHUB_TOKEN ]; then
     echo Be there a github token!
-    git push -f https://jsbean:$GITHUB_TOKEN@github.com/dn-m/dn-m.github.io master &2>/dev/null
+    git push -f -q https://jsbean:\(GITHUB_TOKEN)@github.com/dn-m/dn-m.github.io master &2>/dev/null
     fi
     """)
 }
