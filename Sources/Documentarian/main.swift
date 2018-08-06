@@ -123,8 +123,13 @@ func main() {
 
         // Attempt to push updates to github repo. This will require auth.
         SwiftShell.main.currentdirectory = "dn-m.github.io"
-        try runAndPrint(bash: "git commit -am 'Update documentation for the \(package.name) package'")
-        try runAndPrint(bash: "git push origin master")
+        try runAndPrint(bash: """
+        if [ -n $GITHUB_TOKEN ]; then
+            git -c user.name='travis' -c user.email='travis' commit -m init
+            git commit -am 'Update documentation for the \(package.name) package'
+            git push -f -q https://jsbean:$GITHUB_TOKEN@github.com/dn-m/\(package.name) master &2>/dev/null
+        fi
+        """)
         SwiftShell.main.currentdirectory = ".."
     } catch {
         print(error)
