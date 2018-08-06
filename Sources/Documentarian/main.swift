@@ -33,7 +33,6 @@ func main() throws {
     try generateHome(in: "dn-m.github.io", assetsPath: "../assets")
     // Attempt to push updates to github repo. This will require auth.
     try pushSiteRepo(for: package, with: token)
-    print("Successfully pushed site to GitHub!")
 }
 
 do {
