@@ -116,10 +116,10 @@ func main() {
         try generateDocs(
             for: package,
             in: "dn-m.github.io/Packages/\(package.name)",
-            assetsPath: "https://dn-m.github.io/assets"
+            assetsPath: "../../../assets"
         )
         // Update the home page to reflect the changes.
-        try generateHome(in: "dn-m.github.io", assetsPath: "https://dn-m.github.io/assets")
+        try generateHome(in: "dn-m.github.io", assetsPath: "../assets")
 
         // Attempt to push updates to github repo. This will require auth.
         SwiftShell.main.currentdirectory = "dn-m.github.io"
