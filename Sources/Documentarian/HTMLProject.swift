@@ -94,7 +94,6 @@ func packages(from directoryPath: String) throws -> [Package] {
 /// Generates the documentation for the entire dn-m project.
 func generateHome(in directoryPath: String, assetsPath: String) throws {
     print("Updating the home page for the dn-m project...")
-    let file = try File(path: "\(directoryPath)/index.html")
-    try file.delete()
+    let file = try Folder(path: directoryPath).createFile(named: "index.html")
     try file.write(string: index(for: try packages(from: directoryPath), assetsPath: assetsPath))
 }

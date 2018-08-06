@@ -112,8 +112,7 @@ func generateDocs(for module: Product, in packageDirectory: String) throws {
 
 func generateHomeIndex(for package: Package, in directoryPath: String, assetsPath: String) throws {
     print("Generating the home page for the \(package.name) package...")
-    let file = try File(path: "\(directoryPath)/index.html")
-    try file.delete()
+    let file = try Folder(path: directoryPath).createFile(named: "index.html")
     try file.write(string: index(for: package, assetsPath: assetsPath))
 }
 
