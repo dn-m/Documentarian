@@ -109,6 +109,7 @@ enum Error: Swift.Error {
 /// Generates documentation for the local Swift Package.
 func main() {
     do {
+        // Infer a model of the package from the `Package.swift` file.
         let package = try decodePackage()
         // Installs jazzy, to be used to generate documentation from SourceKitten artifacts
         try installJazzy()
