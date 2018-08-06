@@ -122,14 +122,13 @@ func main() {
         try generateHome(in: "dn-m.github.io", assetsPath: "../Documentarian/assets")
 
         // Attempt to push updates to github repo. This will require auth.
-        run(bash: "cd dn-m.github.io")
+        SwiftShell.main.currentdirectory = "dn-m.github.io"
         try runAndPrint(bash: "git commit -m 'Update documentation for the \(package.name) package'")
         try runAndPrint(bash: "git push origin master")
-        run(bash: "cd ..")
+        SwiftShell.main.currentdirectory = ".."
     } catch {
         print(error)
     }
 }
 
 main()
-
