@@ -64,7 +64,7 @@ func breadcrumbs(assetsPath: String) -> String {
 func body(for packages: [Package], assetsPath: String) -> String {
     return """
     <body>
-    <a title="dn-m | Documentation Home"</a>
+    <a title="dn-m | Documentation Home"></a>
     \(header())
     \(breadcrumbs(assetsPath: assetsPath))
     \(content(for: packages))
