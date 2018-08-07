@@ -17,10 +17,10 @@ func runJazzy(for module: Product, outputDirectory: String) -> String {
     return """
     jazzy \\
     --sourcekitten-sourcefile \(module.name).json \\
-    --config ./Sources/\(module.name)/Documentation/.jazzy.yaml \\
+    --config Sources/\(module.name)/Documentation/.jazzy.yaml \\
     --output \(outputDirectory) \\
     --theme fullwidth \\
-    --abstract ./Sources/\(module.name)/Documentation/* \\
+    --abstract Sources/\(module.name)/Documentation/* \\
     --disable-search \\
     --clean \\
     """
