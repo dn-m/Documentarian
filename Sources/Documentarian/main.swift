@@ -5,10 +5,24 @@ import Files
 enum Error: Swift.Error {
     case invalidModuleName(String)
     case personalAccessTokenNotFound
+    case environmentVariableNotFound(String)
+    case notOnMasterBranch(String)
+    case notPush
 }
+
+let env = ProcessInfo.processInfo.environment
 
 /// Generates documentation for the local Swift Package.
 func main() throws {
+    // Only generate documentation if we are pushing to the `master` branch.
+    // TODO: Consider only doing this on a release.
+    guard let branch = env["TRAVIS_BRANCH"] else {
+        throw Error.environmentVariableNotFound("TRAVIS_BRANCH")
+    }
+    guard branch == "master" else { throw Error.notOnMasterBranch(branch) }
+    guard let isPullRequest = env["TRAVIS_PULL_REQUEST"], isPullRequest == "false" else {
+        throw Error.notPush
+    }
     // Infer a model of the package from the `Package.swift` manifest file.
     let package = try decodePackage()
     // Clone `SourceKitten` if necessary, which scrapes documentation from Swift source code.
@@ -16,7 +30,7 @@ func main() throws {
     // Install `jazzy`, to be used to generate documentation from `SourceKitten` artifacts.
     try installJazzy()
     // Don't even bother if there is no Github personal access token.
-    guard let token = ProcessInfo.processInfo.environment["GITHUB_TOKEN"] else {
+    guard let token = env["GITHUB_TOKEN"] else {
         throw Error.personalAccessTokenNotFound
     }
     // Clone / update the dn-m/dn-m.github.io repo
