@@ -13,6 +13,7 @@ func installJazzy() throws {
 }
 
 func runJazzy(for module: Product, outputDirectory: String) -> String {
+    print("Running jazzy...")
     return """
     jazzy \\
     --sourcekitten-sourcefile \(module.name).json \\
