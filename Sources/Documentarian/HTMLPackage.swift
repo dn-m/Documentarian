@@ -108,6 +108,7 @@ func generateDocs(for module: Product, in packageDirectory: String) throws {
     run(bash: runSourceKitten(for: module))
     try runAndPrint(bash: runJazzy(for: module, outputDirectory: moduleDirectory))
     run(bash: cleanUpJazzyArtifacts(for: module))
+    run(bash: "rm -rf \(moduleDirectory)/docsets")
 }
 
 func generateHomeIndex(for package: Package, in directoryPath: String, assetsPath: String) throws {
