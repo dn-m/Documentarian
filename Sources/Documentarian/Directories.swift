@@ -6,10 +6,13 @@
 //
 
 import SwiftShell
+import Files
 
 func prepareDirectories(for package: Package, in directoryPath: String) throws {
     print("Preparing directory structure for the documentation of the \(package.name) package...")
-    run(bash: "rm -rf \(directoryPath)/Packages\(package.name)/*")
+    let packagePath = path(for: package, from: directoryPath)
+    run(bash: "rm -rf \(packagePath)")
+    run(bash: "mkdir \(packagePath)")
     package.products.forEach { module in
         run(bash: "mkdir -p \(path(for: module, in: package, from: directoryPath))")
     }
