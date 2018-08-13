@@ -23,6 +23,11 @@ func ensureOperatingSystemIsMacOS() throws {
     guard let os = env["TRAVIS_OS_NAME"], os == "osx" else { throw Error.notMacOS }
 }
 
+func personalAccessTokenFound(in environment: [String: String]) throws -> String {
+    guard let token = environment["GITHUB_TOKEN"] else { throw Error.personalAccessTokenNotFound }
+    return token
+}
+
 enum Error: Swift.Error {
     case invalidModuleName(String)
     case personalAccessTokenNotFound
@@ -45,7 +50,7 @@ func main() throws {
     // Install `jazzy`, to be used to generate documentation from `SourceKitten` artifacts.
     try installJazzy()
     // Don't even bother if there is no Github personal access token.
-    guard let token = env["GITHUB_TOKEN"] else { throw Error.personalAccessTokenNotFound }
+    let token = try personalAccessTokenFound(in: env)
     // Clone / update the dn-m/dn-m.github.io repo
     try pullSiteRepo(with: token)
     // Create the directory infrastructure for the documentation of the package we are visiting
@@ -60,8 +65,6 @@ func main() throws {
     try generateHome(in: "dn-m.github.io", assetsPath: "../assets")
     // Attempt to push updates to github repo. This will require auth.
     try pushSiteRepo(for: package, with: token)
-    // Run codecov
-    try runAndPrint(bash: "bash <(curl -s https://codecov.io/bash)")
 }
 
 do {
