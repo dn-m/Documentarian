@@ -2,6 +2,27 @@ import Foundation
 import SwiftShell
 import Files
 
+// TODO: Consider only doing this on a release (tag).
+func ensurePushingOnMasterBranch(env: [String: String]) throws {
+    // Bail if Travis CI environment variables are not found
+    guard let branch = env["TRAVIS_BRANCH"] else {
+        throw Error.environmentVariableNotFound("TRAVIS_BRANCH")
+    }
+    // Only generate documentation when pushing to master branch
+    guard branch == "master" else {
+        throw Error.notOnMasterBranch(branch)
+    }
+    // Only generate documentation when pushing, not pulling
+    guard let isPullRequest = env["TRAVIS_PULL_REQUEST"], isPullRequest == "false" else {
+        throw Error.notPush
+    }
+}
+
+func ensureOperatingSystemIsMacOS() throws {
+    // Only generate documentation if we are testing on macos, as to avoid duplicating work
+    guard let os = env["TRAVIS_OS_NAME"], os == "osx" else { throw Error.notMacOS }
+}
+
 enum Error: Swift.Error {
     case invalidModuleName(String)
     case personalAccessTokenNotFound
@@ -15,17 +36,8 @@ let env = ProcessInfo.processInfo.environment
 
 /// Generates documentation for the local Swift Package.
 func main() throws {
-    // Only generate documentation if we are pushing to the `master` branch.
-    // TODO: Consider only doing this on a release (tag).
-    guard let branch = env["TRAVIS_BRANCH"] else {
-        throw Error.environmentVariableNotFound("TRAVIS_BRANCH")
-    }
-    guard branch == "master" else { throw Error.notOnMasterBranch(branch) }
-    guard let isPullRequest = env["TRAVIS_PULL_REQUEST"], isPullRequest == "false" else {
-        throw Error.notPush
-    }
-    // Only generate documentation if we are testing on macos, as to avoid duplicating work
-    guard let os = env["TRAVIS_OS_NAME"], os == "osx" else { throw Error.notMacOS }
+    try ensurePushingOnMasterBranch(env: env)
+    try ensureOperatingSystemIsMacOS()
     // Infer a model of the package from the `Package.swift` manifest file.
     let package = try decodePackage()
     // Clone `SourceKitten` if necessary, which scrapes documentation from Swift source code.
