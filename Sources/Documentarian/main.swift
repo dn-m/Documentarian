@@ -8,6 +8,7 @@ enum Error: Swift.Error {
     case environmentVariableNotFound(String)
     case notOnMasterBranch(String)
     case notPush
+    case notMacOS
 }
 
 let env = ProcessInfo.processInfo.environment
@@ -23,6 +24,7 @@ func main() throws {
     guard let isPullRequest = env["TRAVIS_PULL_REQUEST"], isPullRequest == "false" else {
         throw Error.notPush
     }
+    guard let os = env["TRAVIS_OS_NAME"], os == "osx" else { throw Error.notMacOS }
     // Infer a model of the package from the `Package.swift` manifest file.
     let package = try decodePackage()
     // Clone `SourceKitten` if necessary, which scrapes documentation from Swift source code.
@@ -30,9 +32,7 @@ func main() throws {
     // Install `jazzy`, to be used to generate documentation from `SourceKitten` artifacts.
     try installJazzy()
     // Don't even bother if there is no Github personal access token.
-    guard let token = env["GITHUB_TOKEN"] else {
-        throw Error.personalAccessTokenNotFound
-    }
+    guard let token = env["GITHUB_TOKEN"] else { throw Error.personalAccessTokenNotFound }
     // Clone / update the dn-m/dn-m.github.io repo
     try pullSiteRepo(with: token)
     // Create the directory infrastructure for the documentation of the package we are visiting
