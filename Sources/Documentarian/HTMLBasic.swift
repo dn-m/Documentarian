@@ -19,7 +19,7 @@ func head(title: String, assetsPath: String) -> String {
 }
 
 /// - Returns: <header> section of `index.html`.
-func header() -> String {
+func header(assetsPath: String) -> String {
     return """
     <header class="header">
     <p class="header-col header-col--primary">
@@ -29,7 +29,7 @@ func header() -> String {
     </p>
     <p class="header-col header-col--secondary">
     <a class="header-link" href="https://github.com/dn-m/">
-    <img class="header-icon" src="build/img/gh.png">
+    <img class="header-icon" src="\(assetsPath)/img/gh.png">
     View on GitHub
     </a>
     </p>
