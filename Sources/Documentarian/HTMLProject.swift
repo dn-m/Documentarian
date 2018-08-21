@@ -82,7 +82,16 @@ func index(for packages: [Package], assetsPath: String) -> String {
 }
 
 func packages(from directoryPath: String) throws -> [Package] {
-    return try Folder.init(path: "\(directoryPath)/Packages").subfolders.map { packageDir in
+    let inOrder = [
+        "NotationView",
+        "NotationModel",
+        "Music",
+        "Graphics",
+        "Math",
+        "Structure",
+        "Time"
+    ]
+    let packages = try Folder.init(path: "\(directoryPath)/Packages").subfolders.map { packageDir in
         Package(
             name: packageDir.name,
             products: try packageDir.subfolder(named: "Modules").subfolders.map {
@@ -90,6 +99,10 @@ func packages(from directoryPath: String) throws -> [Package] {
             }
         )
     }
+    let ordered = packages.sorted {
+        inOrder.index(of: $0.name) ?? .max < inOrder.index(of: $1.name) ?? .max
+    }
+    return ordered
 }
 
 /// Generates the documentation for the entire dn-m project.
