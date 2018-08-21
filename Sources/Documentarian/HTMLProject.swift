@@ -6,6 +6,7 @@
 //
 
 import Files
+import SwiftShell
 
 func navigationGroup(for package: Package) -> String {
     return """
@@ -35,7 +36,7 @@ func abstract() -> String {
     <article class="main-content">
     <section class="section">
     <div class="section-content">
-    The is the documentation of the dn-m project.
+    \(run("redcarpet", "dn-m.github.io/README.md").stdout)
     </div>
     </section>
     </article>
