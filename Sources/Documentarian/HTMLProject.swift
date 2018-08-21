@@ -66,7 +66,7 @@ func body(for packages: [Package], assetsPath: String) -> String {
     return """
     <body>
     <a title="dn-m | Documentation Home"></a>
-    \(header())
+    \(header(assetsPath: assetsPath))
     \(breadcrumbs(assetsPath: assetsPath))
     \(content(for: packages))
     \(footer())
