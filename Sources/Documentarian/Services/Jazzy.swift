@@ -20,6 +20,7 @@ func runJazzy(for module: Product, outputDirectory: String) -> String {
     --config Sources/\(module.name)/Documentation/.jazzy.yaml \\
     --output \(outputDirectory) \\
     --theme fullwidth \\
+    --readme Sources/\(module.name)/README.md \\
     --abstract Sources/\(module.name)/Documentation/* \\
     --disable-search \\
     --clean \\
