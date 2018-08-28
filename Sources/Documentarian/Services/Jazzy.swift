@@ -19,7 +19,7 @@ func runJazzy(for module: Product, outputDirectory: String) -> String {
     --sourcekitten-sourcefile \(module.name).json \\
     --config Sources/\(module.name)/Documentation/.jazzy.yaml \\
     --output \(outputDirectory) \\
-    --root-url dn-m.github.io \\
+    --root-url https://dn-m.github.io \\
     --theme fullwidth \\
     --readme Sources/\(module.name)/README.md \\
     --abstract Sources/\(module.name)/Documentation/* \\
