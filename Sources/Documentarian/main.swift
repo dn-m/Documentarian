@@ -9,7 +9,7 @@ func ensurePushingOnMasterBranch(env: [String: String]) throws {
         throw Error.environmentVariableNotFound("TRAVIS_BRANCH")
     }
     // Only generate documentation when pushing to master branch
-    guard branch == "master" else {
+    guard ["master", "latest"].contains(branch) else {
         throw Error.notOnMasterBranch(branch)
     }
     // Only generate documentation when pushing, not pulling
