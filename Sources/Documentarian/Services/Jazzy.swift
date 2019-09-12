@@ -16,6 +16,7 @@ func runJazzy(for module: Product, outputDirectory: String) -> String {
     print("Running jazzy...")
     return """
     jazzy \\
+    --module \(module.name) \\
     --sourcekitten-sourcefile \(module.name).json \\
     --config Sources/\(module.name)/Documentation/.jazzy.yaml \\
     --output \(outputDirectory) \\
