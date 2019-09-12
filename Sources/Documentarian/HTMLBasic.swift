@@ -57,7 +57,7 @@ func scripts(at path: String) -> String {
 func footer() -> String {
     return """
     <section class="footer">
-    <p>© 2018 <a class="link" href="https://github.com/dn-m" target="_blank" rel="external">dn-m</a>. All rights reserved.</p>
+    <p>© 2019<a class="link" href="https://github.com/dn-m" target="_blank" rel="external">dn-m</a>. All rights reserved.</p>
     </section>
     """
 }
