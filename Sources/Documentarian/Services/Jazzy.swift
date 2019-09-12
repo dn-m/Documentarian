@@ -16,6 +16,8 @@ func runJazzy(for module: Product, outputDirectory: String) -> String {
     print("Running jazzy...")
     return """
     jazzy \\
+    --author dn-m \\
+    --author-url https://dn-m.github.io \\
     --module \(module.name) \\
     --sourcekitten-sourcefile \(module.name).json \\
     --config Sources/\(module.name)/Documentation/.jazzy.yaml \\
