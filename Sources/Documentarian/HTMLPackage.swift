@@ -11,9 +11,9 @@ import Files
 func breadcrumbs(for package: Package, assetsPath: String) -> String {
     return """
     <p class="breadcrumbs">
-    <a class="breadcrumb" href="https://dn-m.github.io">dn-m</a>
+    <a class="breadcrumb" href="https://dn-m.github.io">dn-m Reference</a>
     <img class="carat" src="\(assetsPath)/img/carat.png">
-    \(package.name)
+    \(package.name) Reference
     </p>
     """
 }
